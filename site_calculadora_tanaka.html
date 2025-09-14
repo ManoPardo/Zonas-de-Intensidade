@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cardio Zones | Calculadora Tanaka</title>
+  <meta name="description" content="Site modelo com calculadora de frequência cardíaca alvo baseada na fórmula de Tanaka. Digite sua idade e receba as zonas de treino em bpm.">
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#111831;
+      --panel-2:#0e152b;
+      --text:#edf2ff;
+      --muted:#9fb0d1;
+      --primary:#4f46e5;
+      --primary-2:#6d28d9;
+      --accent:#f43f5e;
+      --ring: rgba(99,102,241,.45);
+      --ok:#22c55e;
+      --border: rgba(255,255,255,.08);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:linear-gradient(180deg,#0a0f1f,#0b1020 60%,#0a0f1f);color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif}
+    a{color:inherit;text-decoration:none}
+    .container{max-width:1080px;margin:0 auto;padding:0 20px}
+    /* Header */
+    header{
+      position:sticky;top:0;z-index:40;
+      backdrop-filter: blur(8px);
+      background: linear-gradient(180deg, rgba(10,13,25,.85), rgba(10,13,25,.55));
+      border-bottom:1px solid var(--border);
+    }
+    .nav{display:flex;align-items:center;justify-content:space-between;height:64px}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.3px}
+    .brand .logo{
+      width:34px;height:34px;border-radius:10px;
+      background: radial-gradient(120% 120% at 20% 20%, var(--primary), var(--accent));
+      box-shadow: 0 8px 24px rgba(79,70,229,.45), inset 0 0 40px rgba(255,255,255,.08);
+      border:1px solid var(--border);
+    }
+    .nav a.link{color:var(--muted);font-weight:600;margin-left:18px}
+    .cta{
+      background: linear-gradient(180deg,var(--primary),var(--primary-2));
+      padding:10px 14px;border-radius:10px;font-weight:800;border:1px solid rgba(255,255,255,.08)
+    }
+    /* Hero */
+    .hero{padding:64px 0 36px;border-bottom:1px solid var(--border);background: radial-gradient(70% 70% at 50% 0%, rgba(79,70,229,.09), transparent 60%)}
+    .hero h1{font-size: clamp(1.6rem, 2.8vw, 2.6rem);line-height:1.15;margin:0}
+    .hero p{color:var(--muted);max-width:760px;margin:10px 0 18px}
+    .hero .grid{display:grid;grid-template-columns: 1.15fr .85fr;gap:24px;align-items:center}
+    @media (max-width: 860px){ .hero .grid{grid-template-columns: 1fr}}
+    .hero .panel{
+      background: linear-gradient(180deg,var(--panel),var(--panel-2));
+      border:1px solid var(--border);border-radius:16px;padding:16px
+    }
+    .tag{display:inline-flex;gap:8px;align-items:center;padding:6px 10px;border-radius:999px;background:rgba(79,70,229,.12);border:1px solid var(--border);color:#c7d2fe;font-weight:700;font-size:.85rem;margin-bottom:10px}
+    /* Calculator */
+    .calc-card{border-radius:16px;background: linear-gradient(180deg,#0e152b,#0f1732);border:1px solid var(--border);padding:16px}
+    label{display:block;margin:6px 2px 8px;font-weight:700}
+    input,button{width:100%;padding:12px;border-radius:12px;font-size:1rem}
+    input{
+      background:#0b1228;color:var(--text);border:1px solid rgba(255,255,255,.12);
+      outline:none;transition: box-shadow .18s,border .18s
+    }
+    input:focus{box-shadow:0 0 0 4px var(--ring);border-color:#a5b4fc}
+    .actions{display:flex;gap:10px;margin-top:12px}
+    .btn-primary{
+      background:linear-gradient(180deg,var(--primary),var(--primary-2));color:#fff;border:0;font-weight:800;cursor:pointer
+    }
+    .btn-ghost{background:#0b1228;color:#cbd5e1;border:1px solid rgba(255,255,255,.14);cursor:pointer}
+    .muted{color:var(--muted);font-size:.92rem}
+    table{width:100%;border-collapse:collapse;margin-top:12px}
+    th,td{padding:10px 8px;border-bottom:1px solid var(--border);text-align:left}
+    th{color:#cbd5e1;font-weight:800;background:rgba(255,255,255,.02)}
+    .fcmax{display:flex;justify-content:space-between;align-items:center;border:1px solid var(--border);border-radius:14px;padding:12px;background:rgba(255,255,255,.02);margin-top:10px}
+    .badge{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:rgba(79,70,229,.12);border:1px solid var(--border);font-weight:800;color:#c7d2fe}
+    /* Features */
+    .features{padding:40px 0;border-bottom:1px solid var(--border)}
+    .features .grid{display:grid;grid-template-columns: repeat(3, minmax(0,1fr));gap:16px}
+    @media (max-width: 900px){.features .grid{grid-template-columns: 1fr}}
+    .feat{background: linear-gradient(180deg,#0e152b,#0f1732);border:1px solid var(--border);border-radius:16px;padding:16px}
+    .feat h3{margin:0 0 8px}
+    /* FAQ */
+    .faq{padding:40px 0}
+    .faq details{background: linear-gradient(180deg,#0e152b,#0f1732);border:1px solid var(--border);border-radius:14px;margin:10px 0}
+    .faq summary{cursor:pointer;padding:14px 16px;font-weight:700;list-style:none}
+    .faq p{color:var(--muted);padding:0 16px 14px;margin:0}
+    /* Footer */
+    footer{border-top:1px solid var(--border);padding:20px 0;color:#9fb0d1;text-align:center}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>Cardio <span style="color:#c7d2fe">Zones</span></div>
+      </div>
+      <nav>
+        <a class="link" href="#calc">Calculadora</a>
+        <a class="link" href="#faq">FAQ</a>
+        <a class="cta" href="#calc">Calcular agora</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container">
+      <div class="grid">
+        <div>
+          <span class="tag">Fórmula de Tanaka</span>
+          <h1>Descubra suas zonas de treino em segundos</h1>
+          <p>Digite sua idade, clique em calcular e obtenha imediatamente sua frequência cardíaca máxima estimada e as zonas de intensidade (Z1–Z5), baseadas em porcentagens da FCmáx.</p>
+          <p class="muted">FCmáx = <strong>208 − 0,7 × idade</strong>. Os resultados são estimativas — ajuste com orientação profissional.</p>
+        </div>
+        <div class="panel">
+          <img alt="Ilustração sutil com ondas e gradientes" aria-hidden="true"
+               src="data:image/svg+xml;utf8,<svg viewBox='0 0 600 340' xmlns='http://www.w3.org/2000/svg'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop stop-color='%236364F1' offset='0'/><stop stop-color='%23F43F5E' offset='1'/></linearGradient></defs><rect width='600' height='340' fill='%230b1020'/><circle cx='140' cy='160' r='120' fill='url(%23g)' opacity='.25'/><circle cx='360' cy='160' r='140' fill='url(%23g)' opacity='.18'/><path d='M0 250 Q 120 220 230 250 T 460 250 T 690 250' stroke='%23a5b4fc' stroke-width='2' fill='none' opacity='.35'/></svg>" style="width:100%;border-radius:12px;border:1px solid var(--border)">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="calc" class="container" style="padding:32px 0">
+    <div class="calc-card">
+      <label for="idade">Idade</label>
+      <input id="idade" type="number" inputmode="numeric" min="5" max="100" placeholder="Ex: 30">
+      <div class="actions">
+        <button id="btnCalcular" class="btn-primary">Calcular</button>
+        <button id="btnLimpar" class="btn-ghost" type="button">Limpar</button>
+      </div>
+
+      <div class="fcmax" id="boxFcmax" style="display:none">
+        <span class="badge">FCmáx estimada</span>
+        <strong id="fcmaxVal">— bpm</strong>
+      </div>
+
+      <table id="tabela" style="display:none" aria-live="polite">
+        <thead>
+          <tr>
+            <th>Zona</th>
+            <th>Intensidade</th>
+            <th>Faixa (bpm)</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <p class="muted" style="margin-top:10px">Os cálculos acontecem no seu navegador. Nenhum dado é enviado para servidores.</p>
+    </div>
+  </section>
+
+  <section class="features">
+    <div class="container">
+      <div class="grid">
+        <div class="feat">
+          <h3>Rápido & Offline</h3>
+          <p class="muted">Funciona direto no navegador, sem internet após carregar a página.</p>
+        </div>
+        <div class="feat">
+          <h3>Layout Responsivo</h3>
+          <p class="muted">Se adapta a celular, tablet e desktop sem esforço.</p>
+        </div>
+        <div class="feat">
+          <h3>Fácil de Embutir</h3>
+          <p class="muted">Cole o arquivo no seu site (ou hospedagem como Netlify) e pronto.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" class="faq">
+    <div class="container">
+      <h2 style="margin:0 0 10px">Perguntas frequentes</h2>
+      <details>
+        <summary>De onde vêm as zonas?</summary>
+        <p>As zonas são faixas percentuais da frequência cardíaca máxima estimada (Tanaka). Ex.: Zona 1 é 50–60% da FCmáx; Zona 5, 90–100%.</p>
+      </details>
+      <details>
+        <summary>Posso personalizar as porcentagens?</summary>
+        <p>Sim. O código é aberto no arquivo. Você pode alterar os valores de 0.50 a 1.00 no JavaScript para seguir outro protocolo.</p>
+      </details>
+      <details>
+        <summary>Os resultados substituem orientação médica?</summary>
+        <p>Não. Servem como referência geral. Procure profissionais para avaliação e ajustes individualizados.</p>
+      </details>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      © <span id="year"></span> Cardio Zones — Modelo de site com calculadora Tanaka.
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    const idadeEl = document.getElementById('idade');
+    const btn = document.getElementById('btnCalcular');
+    const btnLimpar = document.getElementById('btnLimpar');
+    const tabela = document.getElementById('tabela');
+    const tbody = tabela.querySelector('tbody');
+    const boxFcmax = document.getElementById('boxFcmax');
+    const fcmaxVal = document.getElementById('fcmaxVal');
+
+    function calcFcMax(idade){ return 208 - 0.7 * idade; }
+    function toBpm(v){ return Math.round(v); }
+
+    function calcular(){
+      const idade = parseInt(idadeEl.value, 10);
+      if(isNaN(idade) || idade < 5 || idade > 100){
+        alert('Digite uma idade válida entre 5 e 100 anos.');
+        return;
+      }
+      const fcmax = calcFcMax(idade);
+      boxFcmax.style.display = 'flex';
+      fcmaxVal.textContent = fcmax.toFixed(1) + ' bpm';
+
+      const zonas = [
+        {nome:'Zona 1', faixa:[0.50, 0.60], intensidade:'Muito leve / Recuperação'},
+        {nome:'Zona 2', faixa:[0.60, 0.70], intensidade:'Leve / Aeróbia básica'},
+        {nome:'Zona 3', faixa:[0.70, 0.80], intensidade:'Moderada'},
+        {nome:'Zona 4', faixa:[0.80, 0.90], intensidade:'Intensa (limiar)'},
+        {nome:'Zona 5', faixa:[0.90, 1.00], intensidade:'Muito intensa'}
+      ];
+
+      tbody.innerHTML = '';
+      zonas.forEach(z => {
+        const min = toBpm(fcmax * z.faixa[0]);
+        const max = toBpm(fcmax * z.faixa[1]);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${z.nome}</td><td>${z.intensidade}</td><td>${min} – ${max}</td>`;
+        tbody.appendChild(tr);
+      });
+      tabela.style.display = 'table';
+    }
+
+    function limpar(){
+      idadeEl.value='';
+      tabela.style.display='none';
+      tbody.innerHTML='';
+      boxFcmax.style.display='none';
+      fcmaxVal.textContent='— bpm';
+      idadeEl.focus();
+    }
+
+    btn.addEventListener('click', calcular);
+    idadeEl.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') calcular(); });
+    btnLimpar.addEventListener('click', limpar);
+  </script>
+</body>
+</html>
